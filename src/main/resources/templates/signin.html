@@ -37,10 +37,18 @@
                 <input type="email" th:field="*{email}" class="form-control" id="emailInput" aria-describedby="emailHelp" placeHolder="Enter email">
                 <small id="emailHelp" class="form-text text-muted">Please enter your account email address.</small>
               </div>
+            </div>            
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">Sign in</button>
             </div>
-            <button type="submit" class="btn btn-primary">Sign in</button>
           </form>
-        
+          
+          <div class="mb-3">
+            <form action="/signup" method="get">
+              <button type="submit" class="btn btn-secondary">Sign up here</button>
+            </form>
+          </div>
+          
         </div>
       </div>
     </div>
