@@ -5,9 +5,6 @@ Michael Broadbear
 Link to app
 https://peaceful-reaches-50301-4559649b3f6c.herokuapp.com/signup
 
-Known issues
-- The hosted app currently runs out of memory during encyrption/decryption when sending a transaction. It works fine on my laptop. I would rather not upgrade to a more powerful host server and am able to demonstrate it on my laptop.
-
 Requirements
 - Authenticated is able to create multiple wallets.
 - All interactions with custodial wallets are on the backend via an API.
