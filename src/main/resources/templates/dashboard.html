@@ -14,20 +14,20 @@
     <div class="container mt-5">
     
       <div th:if="${error != null}" class="row justify-content-center">
-        <div class="col-6">
+        <div class="col-8">
           <div class="alert alert-danger" role="alert" th:text="${error}">
           </div>
         </div>
       </div>
 
       <div th:if="${alert_success != null}" class="row justify-content-center">
-        <div class="col-6">
+        <div class="col-8">
           <div class="alert alert-success" role="alert" th:text="${alert_success}"></div>
         </div>
       </div>
       
       <div class="row justify-content-center">
-        <div class="col-6">
+        <div class="col-8">
       
           <h1>Dashboard</h1>
 
@@ -40,18 +40,28 @@
           </div>
 
           <div class="row mb-3">
-            <div class="col-10"><h4>Address</h4></div>
-            <div class="col-2"><h4>Balance (Wei)</h4></div>
+            <div class="col-6"><h4>Address</h4></div>
+            <div class="col-3"><h4>Balance (Wei)</h4></div>
+            <div class="col-2"></div>
           </div>
 
           <div class="row mb-3" th:each="b: ${dashboardModel?.balances}">
-            <div class="col-10" th:text="${b.address}"></div>
-            <div class="col-2" th:text="${b.balance}"></div>
+            <div class="col-6" th:text="${b.address}"></div>
+            <div class="col-3" th:text="${b.balance}"></div>
+            <div class="col-2">
+              <form action="#" th:action="@{/transaction}" method="get">
+                <input type="hidden" id="fromAddressInput" name="fromAddress" th:value="${b.address}">
+                <button type="submit" class="btn btn-primary">Transfer</button>
+              </form>
+            </div>
           </div>
 
           <div class="row mb-3">
             <form action="/wallets" method="post">
-              <button type="submit" class="btn btn-primary">Create wallet</button>
+              <div class="row mb-3">
+                <div class="col-3"><button type="submit" class="btn btn-primary">Create wallet</button></div>
+                <div class="col-6"><input type="password" class="form-control" id="password" name="password" placeHolder="Enter password to create wallet"></div>
+              </div>
             </form>
           </div>
 

@@ -108,7 +108,7 @@ public class WalletService {
 					credentials,
 					toAddress,
 					BigDecimal.valueOf(value),
-					Convert.Unit.ETHER)
+					Convert.Unit.WEI)
 					.send();
 			return transactionReceipt;
 		} catch (Exception ex) {
