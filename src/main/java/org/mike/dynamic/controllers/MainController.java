@@ -48,15 +48,10 @@ public class MainController {
 	
 	@Autowired
 	Web3j web3;
-	
-	@GetMapping(path = "/hello")
-	public String hello() {
-		return "Hello!";
-	}
 
-	@GetMapping(path = "/index")
+	@GetMapping(path = "/")
 	public String index() {
-		return "index";
+		return "redirect:/dashboard";
 	}
 	
 	@GetMapping(path = "/web3version")
