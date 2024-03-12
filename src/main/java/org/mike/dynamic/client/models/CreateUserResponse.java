@@ -1,4 +1,4 @@
-package org.mike.dynamic.client.model;
+package org.mike.dynamic.client.models;
 
 public class CreateUserResponse {
 

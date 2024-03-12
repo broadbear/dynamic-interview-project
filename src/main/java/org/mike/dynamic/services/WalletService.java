@@ -1,6 +1,8 @@
 package org.mike.dynamic.services;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
 
 import org.mike.dynamic.repos.WalletRepo;
@@ -14,6 +16,12 @@ import org.web3j.crypto.Keys;
 import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
 
 @Component
 public class WalletService {
@@ -23,8 +31,10 @@ public class WalletService {
 	@Autowired
 	WalletRepo walletRepo;
 	
+	@Autowired
+	Web3j web3;
+	
 	public void createEtheriumWalletOld() {
-		
 		// suggested
 		try {
 			String ethWalletLocation = "/wallets";
@@ -42,8 +52,6 @@ public class WalletService {
 	}
 	
 	public String createEtheriumWalletFile(String password) {
-
-		// or?
 		try {
 			// Why? Because the above writes the wallet out to a file. Any files
 			// written to a container are lost when the container is restarted or
@@ -59,23 +67,52 @@ public class WalletService {
 		}
 	}
 	
-	public WalletFile getEtheriumWalletFile(String address) {
-		
+	public WalletFile getEtheriumWalletFile(String walletAddress) {		
 		try {
-			WalletFile walletFile = walletRepo.findByAddress(address).get();
+			WalletFile walletFile = walletRepo.findByAddress(walletAddress).get();
 			return walletFile;
 		} catch (Exception ex) {
-			log.error("Problem retrieving wallet file for address %s", address);
+			log.error("Problem retrieving wallet file for address %s", walletAddress);
 			throw new RuntimeException(ex);
 		}
 	}
 	
-	public Credentials getCredentials(String address, String password) {
+	public Credentials getCredentials(String walletAddress, String password) {
 		try {
-			WalletFile walletFile = getEtheriumWalletFile(address);
+			WalletFile walletFile = getEtheriumWalletFile(walletAddress);
 	        Credentials credentials = Credentials.create(Wallet.decrypt(password, walletFile));
 	        return credentials;
 		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+	
+	public BigInteger getBalance(String address) {
+		try {
+			EthGetBalance ethGetBalance = web3.ethGetBalance("0x" + address, DefaultBlockParameterName.LATEST)
+					.sendAsync()
+					.get();
+			return ethGetBalance.getBalance();
+		} catch (Exception ex) {
+			log.error("Problem retrieving balance for {}", address, ex);
+			throw new RuntimeException(ex);
+		}
+		
+	}
+	
+	public TransactionReceipt transferEther(String fromAddress, String toAddress, String password, double value) {
+		try {
+			Credentials credentials = getCredentials(fromAddress, password);
+			TransactionReceipt transactionReceipt = Transfer.sendFunds(
+					web3,
+					credentials,
+					toAddress,
+					BigDecimal.valueOf(value),
+					Convert.Unit.ETHER)
+					.send();
+			return transactionReceipt;
+		} catch (Exception ex) {
+			log.error("Problem transferring funds from {} to {}", fromAddress, toAddress, ex);
 			throw new RuntimeException(ex);
 		}
 	}
